@@ -10,8 +10,8 @@
 * Para poder ver y probar el trabajo selecione el archivo "Perm_2c.ipynb" y luego clickear en "Open in colab" para poder correr el programa.
 
 
+<h3>RSA KEY GENERATOR</h3>
 
-**RSA KEY GENERATOR
 ```python
 class RSA:
   def __init__(self, k, info=False):
@@ -86,6 +86,7 @@ print("\ne*d mod phi =", e*d % rsa.phi)    # e*d mod n = 1 mod n
 print("phi | (e*d - 1) = ", (e*d-1) % rsa.phi)   # phi | (e*d - 1)
 print("mgd(e, phi)={:}\t mgd(d,phi)={:}".format(Euclides(e, rsa.phi), Euclides(d, rsa.phi)))
 ```
+
 **output:**
 ```
 RSA (s=10000, e=16385075402760093, d=93236124964774545, n=103366470122510461, phi=103366469478339772)
@@ -99,7 +100,7 @@ phi | (e*d - 1) =  0
 mgd(e, phi)=1	 mgd(d,phi)=1
 ```
 
-**3. (8 points) Validar firmas digitales: Verificar que P(S(m)) = HASH(M) para 3 mensajes distintos, mostrando la respectiva firma σ en cada caso. Utilice la Función Hash SHA-1 para generar m a través de un texto M ( por ejemplo Hola Mundo). Utilizar b = 32 bits en el algoritmo RSA.
+<h3>3. (8 points) Validar firmas digitales: Verificar que P(S(m)) = HASH(M) para 3 mensajes distintos, mostrando la respectiva firma σ en cada caso. Utilice la Función Hash SHA-1 para generar m a través de un texto M ( por ejemplo Hola Mundo). Utilizar b = 32 bits en el algoritmo RSA.</h3>
 
 ```python
 import hashlib
@@ -120,6 +121,7 @@ for word in words:
 
   print(word + " "*(25-len(word)) + rsa_word + " "*(32-len(rsa_word)) + hash_word + " "*10 + rsa_word_2)
 ```
+
 **output:**
 
 ```
