@@ -100,6 +100,62 @@ phi | (e*d - 1) =  0
 mgd(e, phi)=1	 mgd(d,phi)=1
 ```
 
+<h3>1. (5 points) Si m es el mensaje y c es el cifrado (ambos representados por un entero). Y además, la clave pública es P = {e, n} (en ese orden).
+Hallar m cuando:
+P = {65537, 999630013489} y c = 747120213790</h3>
+
+```python
+e, n, c = 65537, 999630013489, 747120213790
+
+pq = []
+while len(pq) < 2:
+  for i in range(2, n):
+    if Euclides(i, n) != 1 and MILLER_RABIN(i, 100):
+      pq.append(i)
+
+phi = (pq[0] - 1) * (pq[1] - 1)
+d = Inversa(e, phi)
+
+m_ = EXPMOD(c, d, n)
+```
+
+<h3>2. (7 points) Si m es el mensaje y c es el cifrado (ambos representados por un entero). Y además, la clave pública es P = {e, n} (en ese orden). Hallar m cuando:
+P ={7, 35794234179725868774991807832568455403003778024228226193532908190484670252364677411513516111204504060317568667} c=35794234179725868774991807832568455403003778024228226193532908190484670252364677411513516052471686245831933544
+Sin embargo al enviar el mismo mensaje (m) cuando e' = 11, el cifrado resulto ser
+c' =357942341797258687749918078325684554030037780242282261935329081 90484670252364665786748759822531352444533388184.
+</h3>
+
+```python
+e1 = 7
+e2 = 11
+
+c1 = 35794234179725868774991807832568455403003778024228226193532908190484670252364677411513516052471686245831933544
+c2 = 35794234179725868774991807832568455403003778024228226193532908190484670252364665786748759822531352444533388184
+
+n = 35794234179725868774991807832568455403003778024228226193532908190484670252364677411513516111204504060317568667
+
+# x > 0:
+
+d1, x1, y1 = Ext_Euclides(e1,e2)
+d2, _, _ = Ext_Euclides(c2,n)
+
+if d1==1 and d2==1:
+  if x1 < 0:
+    a = EXPMOD(Inversa(c1, n), -x1, n)
+  else:
+    a = EXPMOD(c1, x1, n)
+
+  if y1 < 0:
+    b = EXPMOD(Inversa(c2, n), -y1, n)
+  else:
+    b = EXPMOD(c2, y1, n)
+
+  m = (a * b) % n
+
+  print("m = ", m)
+  print("\"c\" igual a \"c_ = P(m)\" ?", EXPMOD(m, e1, n)==c1)
+```
+
 <h3>3. (8 points) Validar firmas digitales: Verificar que P(S(m)) = HASH(M) para 3 mensajes distintos, mostrando la respectiva firma σ en cada caso. Utilice la Función Hash SHA-1 para generar m a través de un texto M ( por ejemplo Hola Mundo). Utilizar b = 32 bits en el algoritmo RSA.</h3>
 
 ```python
