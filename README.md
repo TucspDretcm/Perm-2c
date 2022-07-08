@@ -104,30 +104,68 @@ mgd(e, phi)=1	 mgd(d,phi)=1
 
 ```python
 import hashlib
-h = hashlib.sha1()
 rsa = RSA(32)   # definimos los 32 bits
 
-print(" m\t\t\t|\t c = S(m)\t\t|\t Hash(m)\t\t\t|\t m = P(S(m))")
+print(" M\t\t\t|\t m\t\t|\t Hash(m)\t\t\t|\t m = S(m)\t|\t m = P(S(m))")
 print("-"*125)
 
 words = ["Hola Mundo", "Juego de Monos", "pichanga fiufiu"]
 for word in words:
-  rsa_word, data = rsa.Cifrado_msg(word)
-
-  h.update(bytes(word, encoding="utf-8"))
-  hash_word = h.hexdigest()
-  
-  rsa_word_2 = rsa.Descifrado_msg(rsa_word, data)
-
-  print(word + " "*(25-len(word)) + rsa_word + " "*(32-len(rsa_word)) + hash_word + " "*10 + rsa_word_2)
+  H = hashlib.sha1(bytes(word, encoding="utf-8")).hexdigest()
+  m = int(H, 16) % rsa.n
+  word_S = rsa.Descifrado(m)
+  word_P = rsa.Cifrado(word_S)
+  print(word + " "*(25-len(word)) + str(m) + " "*(22-len(str(m))) + H + " "*5 + str(word_S) + " "*(22-len(str(word_S))) + str(word_P))
 ```
 
 **output:**
 
 ```
- m			|	 c = S(m)		|	 Hash(m)			|	 m = P(S(m))
+ M			|	 m		|	 Hash(m)			|	 m = S(m)	|	 m = P(S(m))
 -----------------------------------------------------------------------------------------------------------------------------
-Hola Mundo               ZfxPnkehf                      48124d6dc3b2e693a207667c32ac672414913994          Hola Mundo
-Juego de Monos           ukc^fPhcPnfefe                  5a6a086036594daa479a73504459d3e140b2d39f          Juego de Monos
-pichanga fiufiu          hENBxe^xPpEkpEk                 62fe33ab9565eb96cd1da8109c0eebcef6e060a1          pichanga fiufiu
+Hola Mundo               548693899             48124d6dc3b2e693a207667c32ac672414913994     982569751             548693899
+Juego de Monos           1438384090            d665ddfb6fe9d2c61d287468e375b2fd92a47f15     463421013             1438384090
+pichanga fiufiu          1528502847            3d81f39719f5f26c5aeba7b19f57ffe062557c1e     625484321             1528502847
+```
+
+
+<h3>Punto adicional para el Examen Final: Utilizar el algoritmo RSA (b = 32) para generar y validar una firma digital. Utilizar el estándar PKCS 1 v1.5 para añadir un padding al mensaje original. Fecha límite de entrega: 08/07/22.</h3>
+
+```python
+import hashlib, sys
+
+def gen_EB(M, bits):
+  H = hashlib.sha1(bytes(M, encoding="utf-8")).hexdigest()
+  PS = "F" * (bits - sys.getsizeof(H) - 3)
+  T = hex(RANDOMGEN_PRIMOS(bits, 100))[2:] + H
+  return "0001" + PS + "00" + T
+
+
+def StringToInt(EB):
+  return int(EB, base=16)
+
+
+def IntToString(c):
+  return hex(c)[2:]
+
+
+bits = 32
+rsa = RSA(bits)
+
+EB = gen_EB("Hola mundo", bits)
+m = StringToInt(EB)
+c = rsa.Descifrado(m)  # m^d mod n
+OB = IntToString(c)
+
+print("\"m\" original: ", m % rsa.n)    # "m" original aplicando modulo para normalizar tanto la original como la "m" recuperada
+print("Firma digital:", OB)
+print("\"m\" recuperada: ", rsa.Cifrado(c))
+```
+
+**output:**
+
+```
+"m" original:  1481651286
+Firma digital: 76cda0f1
+"m" recuperada:  1481651286
 ```
